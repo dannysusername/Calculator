@@ -1,0 +1,85 @@
+Numbers, results appear on result JTextArea
+
+
+Calculation to the result appears on calculation field
+
+Operator must be saved for calculation.
+The current calculation is saved getWidth
+firstOperand
+currentOperand
+currentOperator
+
+Number inputed, gets saved as currentOperand
+when operator is clickedm move to firstOperand
+
+Number inputed saved as currentOperand
+when equals is clicked currentOperand + firstOperand = result
+result becomes currentOperand.
+firstOperand = 0;
+
+10 - current operand
+/ - current operator
+2 - current opernad
+
+10 - firstOperand
+
+firstOperand / currentOperand = 5
+
+firstOperand = 5
+
+firstOperand/2 = 2.5
+
+firstOperand = 2.5
+
+
+
+
+
+try 1, hard to find easy way to add after an equals
+
+
+    public void numbersAction(int number) {
+        currentOperand = currentOperand.concat(String.valueOf(number));
+        resultTextArea.setText(currentOperand);
+        calculationField.setText(calculationField.getText() + String.valueOf(number));  
+        System.out.println("Current Operand: " + currentOperand + "Double value: " + Double.parseDouble(currentOperand));
+        System.out.println("First value: " + firstOperand);
+            /*
+             *  
+             */
+    }
+
+    public void operatorAction(String operator) {
+        
+        if(firstOperand != 0) {
+            
+        }
+
+            currentOperator = operator;
+            firstOperand = Double.parseDouble(currentOperand);
+            calculationField.setText(calculationField.getText() + operator);
+            currentOperand = "";
+
+
+      
+
+        System.out.println("Current Operand: empty"  );
+        System.out.println("First operand: " + firstOperand);
+
+    }
+
+    public void equalsAction() {
+         double solution = calculate(firstOperand, Double.parseDouble(currentOperand), currentOperator);
+            calculationField.setText(calculationField.getText() + " = ");
+            resultTextArea.setText(String.valueOf(solution));
+            firstOperand = solution;
+            currentOperand = "0";
+            /*
+             * Click equals again, click operators again
+             */
+            System.out.println("-----------");
+            System.out.println("Current Operand: " + currentOperand + (" Double value: " + Double.parseDouble(currentOperand)));
+            System.out.println("First operand: " + firstOperand);
+            System.out.println("Current operator: " + currentOperator);
+    
+    }
