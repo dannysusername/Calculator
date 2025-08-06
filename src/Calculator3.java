@@ -5,7 +5,7 @@ import javax.swing.text.Caret;
 import java.awt.event.*;
 import java.awt.*;
 
-public class Calculator2 extends JFrame{
+public class Calculator3 extends JFrame{
 
     private JFrame frame;
     private JPanel keypadJPanel;
@@ -42,6 +42,9 @@ public class Calculator2 extends JFrame{
     private String savedResultStr = "0";
     private double savedResult = 0;
 
+    private String currentOperandStr = "";
+    private double currentOperand = 0;
+
     private String firstOperandStr = "";
     private double firstOperand = 0;
 
@@ -57,7 +60,7 @@ public class Calculator2 extends JFrame{
     private JButton decimalPoint;
 
     
-    public Calculator2(){
+    public Calculator3(){
         this.frame = new JFrame();
         this.frame.setSize(300, 400);
         this.frame.setLayout(new BoxLayout(this.frame.getContentPane(), BoxLayout.Y_AXIS));
@@ -229,193 +232,98 @@ public class Calculator2 extends JFrame{
 
     }
 
+    /*
+     * Problem is that I can distinguish when there is an old operation but I am not sure how to reset currentOperandStr to "" because I cannot do that in the operatorAction method
+     * or the numbersAction method. In the operator method the currentOperand stays and firstOperand copys the value from currentOperand. I cant do it in numbersAction
+     * cause everytime a number is clicked currentOperand will be erased.
+     */
+
 
     public void numbersAction(String number) {
-        
-        if(currentToken.equals("=")) {
-            clearActions();
-            firstOperandStr = firstOperandStr.concat(number);
-            firstOperand = Double.valueOf(firstOperandStr);
-            resultTextArea.setText(firstOperandStr);
-            System.out.println("1");
-
-        } else if(isNewOperation) {
-            firstOperandStr = firstOperandStr.concat(number);
-            firstOperand = Double.valueOf(firstOperandStr);
-            //secondOperandStr = secondOperandStr.concat(number);
-            //secondOperand = Double.valueOf(secondOperandStr);
-            resultTextArea.setText(firstOperandStr);
-            System.out.println("2");
-
-        } else {
-            
-            secondOperandStr = secondOperandStr.concat(number);
-            secondOperand = Double.valueOf(secondOperandStr);
-            resultTextArea.setText(secondOperandStr);
-            System.out.println("3");
+        if(!isNewOperation) {
+            currentOperandStr = "";
+            currentOperand = 0;
+            isNewOperation = true;
 
         }
+        
+        currentOperandStr = currentOperandStr.concat(number);
+        currentOperand = Double.valueOf(currentOperandStr);
 
-        System.out.println("AC");
-        calculationField.setText(calculationField.getText() + number);
         currentToken = number;
         
-        System.out.println("[ numberActions method called ]");
-        printTesting();
         
-
+        printTesting();
     }
 
 
     public void operatorAction(String operator) {
 
-        /*
-         * If a number is clicked and an operator then an equals. Calculate the number with itsself using the operator. Example, 3 + , then click = will do 3 + 3 = 6. 
-         * Make sure to save 
-         * 3 to third operand just incase user clicks equals again. Problem is that we need to remove the code that puts equals the second operand to the first in the number
-         * actions.
-         * 
-         * /*
-             * When operator is called after new operation or a number (ex. 3 +) you need to set the secondOperand to the firstOperand in the operatorAction method, not
-             * in the equals method cause if you clearEntryActions you want to be able to turn that secondOperand to zero.
-             */
-         
-        
-        if(currentToken.equals(operator)) {
-            System.out.println("1");
-            return;
+        if(isNewOperation == false) {
+            currentOperand = currentOperand + firstOperand;
+            currentOperandStr = String.valueOf(currentOperand);
 
-        } else if (isNewOperation == true) {
-            thirdOperand = firstOperand;
-            thirdOperandStr = firstOperandStr;
-            secondOperandStr = "";
-            System.out.println("2");
+            firstOperand = currentOperand;
 
-        } else if(isNewOperation == false) {
-            System.out.println("3");
-            savedResult = calculate(firstOperand, secondOperand, currentOperator);
-            firstOperand = savedResult;
-            firstOperandStr = String.valueOf(savedResult);
-            resultTextArea.setText(String.valueOf(savedResult));
 
-        } 
+        } else if (currentToken.equals("=")) {
+            firstOperand = currentOperand;
+            firstOperandStr = String.valueOf(firstOperand);
+            isNewOperation = true;
 
-        
-        
-        //secondOperandStr = "";
-        currentOperator = operator;
-        isNewOperation = false;
-        calculationField.setText(calculationField.getText() + " " + operator + " ");
+        } else {
+            firstOperand = calculate(currentOperand, firstOperand, currentOperator);
+            firstOperandStr = String.valueOf(firstOperand);
+            currentOperand = firstOperand;
+            currentOperandStr = String.valueOf(currentOperand);
+            
+            
+        }
 
+        isNewOperation = false; 
+        currentOperator = operator;      
         currentToken = operator;
-
-        System.out.println("AC");
-        System.out.println("[ Operator action method called ]");
-
-       printTesting();
-
+    
+        printTesting();
     }
 
     public void equalsAction() {
 
         if(currentToken.equals("=")) {
-            System.out.println("...");
-            firstOperand = savedResult;
-            firstOperandStr = String.valueOf(savedResult);
-            savedResult = calculate(savedResult, thirdOperand, currentOperator);
-            System.out.println("1");
-
-        } else if (firstOperandStr.equals("")) {
+            firstOperand = currentOperand;
             firstOperandStr = String.valueOf(firstOperand);
-            calculationField.setText(firstOperandStr + " " + calculationField.getText() + " = ");
-            System.out.println("2");
-
-        } else if (currentToken.equals("+") || currentToken.equals("-") || currentToken.equals("/") || currentToken.equalsIgnoreCase("X")) {
-            secondOperand = thirdOperand;
-            secondOperandStr = thirdOperandStr;
-
-            thirdOperand = 0;
-            thirdOperandStr = "";
-            calculationField.setText(calculationField.getText() + Double.valueOf(secondOperand) + " = ");
-            System.out.println("3");
+            currentOperand = calculate(currentOperand, secondOperand, currentOperator);
+            currentOperandStr = String.valueOf(currentOperand);
+            savedResult = currentOperand;
+            
 
         } else {
-            calculationField.setText(calculationField.getText() + " = ");
-            System.out.println("4");
+            savedResult = calculate(firstOperand, currentOperand, currentOperator);
+            secondOperand = currentOperand;
+            secondOperandStr = String.valueOf(secondOperand);
+            currentOperand = savedResult;
+            currentOperandStr = String.valueOf(currentOperand);
+            isNewOperation = true;
 
         }
 
-        System.out.println("AC");
-        savedResult = calculate(firstOperand, secondOperand, currentOperator);
-        savedResultStr = String.valueOf(savedResult);
-        thirdOperand = secondOperand;
-        thirdOperandStr = secondOperandStr;
-
-        resultTextArea.setText(savedResultStr);     
-        currentToken = "=";
         
-        System.out.println("[ Equals method called ]");
+
+        currentToken = "=";
+
         printTesting();
     
     }
 
+    
+
     public void clearActions() {
-        firstOperand = 0;
-        secondOperand = 0;
-        thirdOperand = 0;
-        savedResult = 0;
-        
-        savedResultStr = "0";
-        firstOperandStr = "";
-        secondOperandStr = "";
-        thirdOperandStr = "";
-        currentToken = "";
-        currentOperator = "+";
-        calculationField.setText("");
-        resultTextArea.setText("0");
-        isNewOperation = true;
-
-        currentToken = "";
-
-        System.out.println("[ clearActions method called ]");
-        printTesting();
+       
 
     }
 
     public void clearEntryActions() {
-        /*
-         * Clear entry turns the current operand, depending if its a new operation or old operation, to the default value 0. It then allows you to re-enter
-         * a value.
-         */
-
-        if(isNewOperation) {
-            firstOperand = 0;
-            firstOperandStr = "";
-            System.out.println("1");
-
-        } else if (currentToken.equals("=")) {
-            calculationField.setText("");
-            resultTextArea.setText("0");
-            System.out.println("2 - clearEntryActions method");
-            clearActions();
-            return;
-
-        } else {
-            secondOperand = 0;
-            secondOperandStr = "";
-            thirdOperand = 0;
-            thirdOperandStr = "";
-            System.out.println("3");
-
-        }
-
-        System.out.println("AC");
-        calculationField.setText(firstOperandStr + " " + currentOperator + " " + secondOperandStr);
-        int secondOperand = (int) this.secondOperand;
-        resultTextArea.setText(String.valueOf(secondOperand));
-        
-        System.out.println("[ clearEntryActions method called ]");
-        printTesting();
+       
         
     }
 
@@ -446,6 +354,9 @@ public class Calculator2 extends JFrame{
     }
 
     public void printTesting() {
+        System.out.println("Current operand: " + currentOperand);
+        System.out.println("Current operand string : " + currentOperandStr);
+
         System.out.println("First operand: " + firstOperand);
         System.out.println("First operand string : " + firstOperandStr);
 
@@ -467,7 +378,7 @@ public class Calculator2 extends JFrame{
 
 
     public static void main(String[] args) {
-        Calculator2 calc = new Calculator2();
+        Calculator3 calc = new Calculator3();
 
     }
 
