@@ -5,7 +5,7 @@ import javax.swing.text.Caret;
 import java.awt.event.*;
 import java.awt.*;
 
-public class Calculator3 extends JFrame{
+public class Calculato4 extends JFrame{
 
     private JFrame frame;
     private JPanel keypadJPanel;
@@ -40,19 +40,19 @@ public class Calculator3 extends JFrame{
     private JButton clearEntry;
     
     private String savedResultStr = "0";
-    private double savedResult = 0;
+    private Number savedResult = 0;
 
     private String currentOperandStr = "";
-    private double currentOperand = 0;
+    private Number currentOperand = 0;
 
     private String firstOperandStr = "";
-    private double firstOperand = 0;
+    private Number firstOperand = 0;
 
     private String secondOperandStr = "";
-    private double secondOperand = 0;
+    private Number secondOperand = 0;
 
     private String thirdOperandStr = "";
-    private double thirdOperand = 0;
+    private Number thirdOperand = 0;
 
     private String currentOperator = "+";
     private String currentToken = "";
@@ -60,7 +60,7 @@ public class Calculator3 extends JFrame{
     private JButton decimalPoint;
 
     
-    public Calculator3(){
+    public Calculato4(){
         this.frame = new JFrame();
         this.frame.setSize(300, 400);
         this.frame.setLayout(new BoxLayout(this.frame.getContentPane(), BoxLayout.Y_AXIS));
@@ -257,7 +257,7 @@ public class Calculator3 extends JFrame{
         }
         
         currentOperandStr = currentOperandStr.concat(number);
-        currentOperand = Double.valueOf(currentOperandStr);
+        currentOperand = printNumber(Double.valueOf(currentOperandStr));
 
         currentToken = number;
         
@@ -389,18 +389,17 @@ public class Calculator3 extends JFrame{
     }
 
 
-    public double calculate(double firstOperand, double secondValue, String operator) {
-
+    public Number calculate(Number firstOperand, Number secondValue, String operator) {
         
         switch(operator) {
-            case "+": return firstOperand + secondValue;
-            case "-": return firstOperand - secondValue;
-            case "X": return firstOperand * secondValue;
+            case "+": return printNumber(firstOperand.doubleValue() + secondValue.doubleValue());
+            case "-": return printNumber(firstOperand.doubleValue() - secondValue.doubleValue());
+            case "X": return printNumber(firstOperand.doubleValue() * secondValue.doubleValue());
             case "/": 
-                if(secondValue != 0) return firstOperand/secondValue;
+                if(secondValue.doubleValue() != 0.0) return printNumber(firstOperand.doubleValue() / secondValue.doubleValue());
                 else throw new ArithmeticException("Division by zero");
             default: return 0;
-                
+                        
         }
 
     }
@@ -416,7 +415,6 @@ public class Calculator3 extends JFrame{
         }
 
     }
-
     
     public void operation() {
         if(isNewOperation == false) {
@@ -451,12 +449,8 @@ public class Calculator3 extends JFrame{
 
 
     public static void main(String[] args) {
-        Calculator3 calc = new Calculator3();
+        Calculato4 calc = new Calculato4();
 
     }
-
-
-
-
 
 }
