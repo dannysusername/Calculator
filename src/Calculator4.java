@@ -5,14 +5,14 @@ import javax.swing.text.Caret;
 import java.awt.event.*;
 import java.awt.*;
 
-public class Calculato4 extends JFrame{
+public class Calculator4 {
 
-    private JFrame frame;
-    private JPanel keypadJPanel;
-    private JTextField calculationField;
-    private JTextArea resultTextArea;
+    JFrame frame;
+    JPanel keypadJPanel;
+    JTextField calculationField;
+    JTextArea resultTextArea;
 
-    private GridBagConstraints keyPadGridConstraints;
+    GridBagConstraints keyPadGridConstraints;
 
     private JButton num1;
     private JButton num2;
@@ -32,35 +32,35 @@ public class Calculato4 extends JFrame{
     private JButton multiply;
     private JButton divide;
     
-    private JButton equals;
+    JButton equals;
 
-    private boolean isNewOperation = true;
+    boolean isNewOperation = true;
 
-    private JButton clear;
-    private JButton clearEntry;
+    JButton clear;
+    JButton clearEntry;
     
-    private String savedResultStr = "0";
-    private Number savedResult = 0;
+    String savedResultStr = "0";
+    Number savedResult = 0;
 
-    private String currentOperandStr = "";
-    private Number currentOperand = 0;
+    String currentOperandStr = "";
+     Number currentOperand = 0;
 
-    private String firstOperandStr = "";
-    private Number firstOperand = 0;
+     String firstOperandStr = "";
+     Number firstOperand = 0;
 
-    private String secondOperandStr = "";
-    private Number secondOperand = 0;
+     String secondOperandStr = "";
+     Number secondOperand = 0;
 
-    private String thirdOperandStr = "";
-    private Number thirdOperand = 0;
+     String thirdOperandStr = "";
+     Number thirdOperand = 0;
 
-    private String currentOperator = "+";
-    private String currentToken = "";
+     String currentOperator = "+";
+     String currentToken = "";
    
-    private JButton decimalPoint;
+     JButton decimalPoint;
 
     
-    public Calculato4(){
+    public Calculator4(){
         this.frame = new JFrame();
         this.frame.setSize(300, 400);
         this.frame.setLayout(new BoxLayout(this.frame.getContentPane(), BoxLayout.Y_AXIS));
@@ -84,22 +84,22 @@ public class Calculato4 extends JFrame{
 
         resultTextArea.setLineWrap(true);
         resultTextArea.setMinimumSize(new Dimension(frame.getContentPane().getWidth(), 150));
+        
 
         this.keypadJPanel = new JPanel();
         keypadJPanel.setLayout(new GridBagLayout());
         keypadJPanel.setPreferredSize(new Dimension(frame.getContentPane().getWidth(), 200));
-        
-        addAllButtons();
 
         frame.add(CalculaterLabel);
         frame.add(calculationField);
         frame.add(resultTextArea);
+        
+        addAllButtons();
         frame.add(keypadJPanel);
         
         frame.setVisible(true);
 
-        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
+    frame.setDefaultCloseOperation(2);
     }
 
     public void addAllButtons() {
@@ -133,6 +133,8 @@ public class Calculato4 extends JFrame{
         addClearButton("C", 2, 1);
         addClearEntryButton("CE", 1, 1);
 
+        addDecimalPoint(".", 2, 6);
+
        
 
 
@@ -152,6 +154,8 @@ public class Calculato4 extends JFrame{
              */        
 
     }
+
+    
 
     public void addNumberButton(int number, int gridx, int gridy) {
         
@@ -207,6 +211,20 @@ public class Calculato4 extends JFrame{
            equalsAction();
         });
         keypadJPanel.add(equals, keyPadGridConstraints); 
+
+    }
+
+    public void addDecimalPoint(String text, int gridx, int gridy) {
+
+        JButton decimalPoint = new JButton(text);
+        keyPadGridConstraints.gridx = gridx;
+        keyPadGridConstraints.gridy = gridy;
+        decimalPoint.addActionListener(e -> {
+            decimalPointButtonAction();
+        });
+
+        keypadJPanel.add(decimalPoint, keyPadGridConstraints);
+
 
     }
 
@@ -338,6 +356,15 @@ public class Calculato4 extends JFrame{
     
     }
 
+    public void decimalPointButtonAction() {
+        currentOperandStr = currentOperandStr.concat(".");
+        currentOperand = currentOperand.doubleValue() + 0.0; 
+        resultTextArea.setText(currentOperandStr);
+
+        printTesting();
+
+    }
+
     public void clearActions() {
         currentOperand = 0;
         firstOperand = 0;
@@ -447,9 +474,17 @@ public class Calculato4 extends JFrame{
         System.out.println("--------------");
     }
 
+    public void instanceTest() {
+        System.out.println("Instance test executed (calc4)");
+    }
+
+    public static void test() {
+        System.out.println("Test calc4");
+    }
+
 
     public static void main(String[] args) {
-        Calculato4 calc = new Calculato4();
+        Calculator4 calc = new Calculator4();
 
     }
 
