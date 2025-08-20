@@ -1,19 +1,16 @@
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-
-import java.awt.event.*;
 import java.awt.*;
 
-public class Calculator extends JFrame{
+public class Calculator {
 
-    private JFrame frame;
-    private JPanel keypadJPanel;
-    private JTextField calculationField;
-    private JTextArea resultTextArea;
+    JFrame frame;
+    JPanel keypadJPanel;
+    JTextField calculationField;
+    JTextArea resultTextArea;
 
-    private GridBagConstraints keyPadGridConstraints;
+    GridBagConstraints keyPadGridConstraints;
 
+    
     private JButton num1;
     private JButton num2;
     private JButton num3;
@@ -32,18 +29,38 @@ public class Calculator extends JFrame{
     private JButton multiply;
     private JButton divide;
     
-    private JButton equals;
 
-    private JButton clear;
-    private JButton clearEntry;
+    JButton equals;
 
-    private String currentOperand = ""; //solution
-    private double firstOperand = 0;
-    private double secondOperand = 0;
-    private String currentOperator = "+";
-    private String currentToken = "";
+    boolean isNewOperation = true;
+
+    JButton clear;
+    JButton clearEntry;
+    
+    String savedResultStr = "0";
+    Number savedResult = 0;
+
+    String currentOperandStr = "";
+     Number currentOperand = 0;
+
+     String firstOperandStr = "";
+     Number firstOperand = 0;
+
+     String secondOperandStr = "";
+     Number secondOperand = 0;
+
+     String thirdOperandStr = "";
+     Number thirdOperand = 0;
+
+     String currentOperator = "+";
+     String currentToken = "";
    
-    private JButton decimalPoint;
+     JButton decimalPoint;
+
+     /*
+      * All Calculators will have a Calculator Label, Calculation Field, resultTextArea, keypadJPanel
+        buttons 1-9
+      */
 
     
     public Calculator(){
@@ -64,35 +81,34 @@ public class Calculator extends JFrame{
         
         JTextArea resultTextArea = new JTextArea(1, 1);
         this.resultTextArea = resultTextArea;
-        resultTextArea.setText("0");
+
+        resultTextArea.setText(savedResultStr);
         resultTextArea.setFocusable(false);
 
         resultTextArea.setLineWrap(true);
         resultTextArea.setMinimumSize(new Dimension(frame.getContentPane().getWidth(), 150));
+        
 
         this.keypadJPanel = new JPanel();
         keypadJPanel.setLayout(new GridBagLayout());
         keypadJPanel.setPreferredSize(new Dimension(frame.getContentPane().getWidth(), 200));
-        
-        addAllButtons();
 
         frame.add(CalculaterLabel);
         frame.add(calculationField);
         frame.add(resultTextArea);
+        
+        addAllButtons();
         frame.add(keypadJPanel);
         
         frame.setVisible(true);
 
-        frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
+    frame.setDefaultCloseOperation(2);
     }
 
     public void addAllButtons() {
         //Change name to something that explains that these are the buttons that are pressed in the calc inorder to perform calculations
 
-        StringBuilder currentOperand = new StringBuilder();
-        String firstOperand;
-        String operator;
+       
 
         GridBagConstraints keyPadGridConstraints = new GridBagConstraints();
         keyPadGridConstraints.fill = GridBagConstraints.BOTH;
@@ -100,23 +116,30 @@ public class Calculator extends JFrame{
         keyPadGridConstraints.weighty = 1.0; 
         this.keyPadGridConstraints = keyPadGridConstraints;
 
-        addNumberButton(1, 0, 0);
-        addNumberButton(2, 1, 0);
-        addNumberButton(3, 2, 0);
-        addNumberButton(4, 0, 1);
-        addNumberButton(5, 1, 1);
-        addNumberButton(6, 2, 1);
-        addNumberButton(7, 0, 2);
-        addNumberButton(8, 1, 2);
-        addNumberButton(9, 2, 2);
-        addNumberButton(0, 1, 3);
+        addNumberButton(1, 0, 5);
+        addNumberButton(2, 1, 5);
+        addNumberButton(3, 2, 5);
+        addNumberButton(4, 0, 4);
+        addNumberButton(5, 1, 4);
+        addNumberButton(6, 2, 4);
+        addNumberButton(7, 0, 3);
+        addNumberButton(8, 1, 3);
+        addNumberButton(9, 2, 3);
+        addNumberButton(0, 1, 6);
 
-        addOperators("/", 3, 0);
-        addOperators("X", 3, 1);
-        addOperators("-", 3, 2);
-        addOperators("+", 3, 3);
+        addOperators("/", 3, 2);
+        addOperators("X", 3, 3);
+        addOperators("-", 3, 4);
+        addOperators("+", 3, 5);
 
-        addEqualsButton();
+        addEqualsButton("=", 3, 6);
+        addClearButton("C", 2, 1);
+        addClearEntryButton("CE", 1, 1);
+
+        addDecimalPoint(".", 2, 6);
+
+       
+
 
         //if operator was already chosen and the same operator is chosen again dont add again to textField
             //if diff operator was chosen change previous operator to current operator.
@@ -134,6 +157,8 @@ public class Calculator extends JFrame{
              */        
 
     }
+
+    
 
     public void addNumberButton(int number, int gridx, int gridy) {
         
@@ -181,11 +206,10 @@ public class Calculator extends JFrame{
         }
     }
 
-    public void addEqualsButton() {
-        this.equals = new JButton("=");
-        keyPadGridConstraints.gridx = 0;
-        keyPadGridConstraints.gridy = 4;
-        keyPadGridConstraints.gridwidth = GridBagConstraints.RELATIVE;
+    public void addEqualsButton(String text, int gridx, int gridy) {
+        this.equals = new JButton(text);
+        keyPadGridConstraints.gridx = gridx;
+        keyPadGridConstraints.gridy = gridy;
         equals.addActionListener(e -> {
            equalsAction();
         });
@@ -193,138 +217,280 @@ public class Calculator extends JFrame{
 
     }
 
-    public void addResetCalculations(String text, int gridx, int gridy) {
-        
-        
+    public void addDecimalPoint(String text, int gridx, int gridy) {
+
+        JButton decimalPoint = new JButton(text);
+        keyPadGridConstraints.gridx = gridx;
+        keyPadGridConstraints.gridy = gridy;
+        decimalPoint.addActionListener(e -> {
+            decimalPointButtonAction();
+        });
+
+        keypadJPanel.add(decimalPoint, keyPadGridConstraints);
+
 
     }
+
+    public void addClearButton(String text, int gridx, int gridy) {
+        
+        this.clear = new JButton(text);
+        keyPadGridConstraints.gridx = gridx;
+        keyPadGridConstraints.gridy = gridy;
+        clear.addActionListener(e -> {
+            clearActions();
+        });
+        keypadJPanel.add(clear, keyPadGridConstraints);
+
+    }
+
+    public void addClearEntryButton(String text, int gridx, int gridy) {
+        
+        this.clearEntry = new JButton(text);
+        keyPadGridConstraints.gridx = gridx;
+        keyPadGridConstraints.gridy = gridy;
+        clearEntry.addActionListener(e -> {
+            clearEntryActions();
+        });
+        keypadJPanel.add(clearEntry, keyPadGridConstraints);
+
+    }
+
 
     public void numbersAction(String number) {
-
         if(currentToken.equals("=")) {
-            calculationField.setText("");
-            firstOperand = 0;
-            secondOperand = 0;
-            currentOperator = "";
-            currentOperand = "";
-            resultTextArea.setText(currentOperand);
+            clearActions();
+            
+        }        
 
-        }
+        saveCurrentOperand(number);
+        resultTextArea.setText(currentOperandStr);
 
-        currentOperand = currentOperand.concat(number);
-        resultTextArea.setText(currentOperand);
-        calculationField.setText(calculationField.getText() + String.valueOf(number)); 
-        currentToken = number; 
-        
-        System.out.println("Current Operand: " + currentOperand + " Double value: " + Double.parseDouble(currentOperand));
-        System.out.println("First operand: " + firstOperand);
-        System.out.println("Current operator: " + currentOperator);
-         System.out.println("Current Token: " + currentToken);
-        System.out.println("--------------");
+        printTesting();
 
     }
 
-    public void operatorAction(String operator) {
+    public void saveCurrentOperand(String number) {
+         if(!isNewOperation) {
+            currentOperandStr = "";
+            currentOperand = 0;
+            isNewOperation = true;
+
+        }
+        
+        currentOperandStr = currentOperandStr.concat(number);
+        currentOperand = printNumber(Double.valueOf(currentOperandStr));
+
+        currentToken = number;
+        
         /*
-         * -Operators are always use with one number
-         * -if they are clicked after an equal sign you have to 
-         * 1 get the result of the 2 previous numbers and save it for example 100/5 = 20, 
-         * if you
-         * 2 change the result text area to only include the previous result and the operator
-         * If you click the same operator nothing happens, but if its different it changes  
-         * 
-         * Equals are used when theres usually 2 numbers saved
-         * If equals is used back to back that means the solution gets operated with the same other number again. For example
-         * 2 + 2 = 4, if you click equals again then 4 + 2 = 6, again 6 + 2 = 8;
+         * This allows me to type a number into the correct spot or "current operand". I do this using a boolean (isNewOperation) to tell me when there is or is
+         * not a new operation. If there is a new operation then I can type into currentOperand. If not the currentOperand is reset. 
          */
 
-        if(operator.equals(currentToken)) {
-            return;
-
-        } else if (currentToken.equals("=")) {
-            //firstOperand = 0;
-            calculationField.setText(String.valueOf(firstOperand));
-            System.out.println("++++++++ Operand: empty"  );
-            System.out.println("First operand: " + firstOperand);
-            System.out.println("Current operator: " + currentOperator);
-            System.out.println("Current Token: " + currentToken);
-            System.out.println("--------------");
-
-            if(!operator.equals("=")) {
-                currentOperand = "0";
-            }
-
-        } 
-
-        currentOperator = operator;
-        firstOperand = Double.parseDouble(currentOperand) + firstOperand;
-        calculationField.setText(calculationField.getText() + " " + operator + " ");
-        resultTextArea.setText(String.valueOf(firstOperand));
-        currentOperand = "";
-        currentToken = operator;
-
-        System.out.println("Current Operand: empty"  );
-        System.out.println("First operand: " + firstOperand);
-        System.out.println("Current operator: " + currentOperator);
-        System.out.println("Current Token: " + currentToken);
-        System.out.println("--------------");
-
     }
 
-    public void equalsAction() {
-        
-        double solution;
-          //5
+
+    public void operatorAction(String operator) {
+        /* 
+        if(isNewOperation == false) {
+            currentOperand = currentOperand + firstOperand;
+            currentOperandStr = String.valueOf(currentOperand);
+            firstOperand = currentOperand;
+
+        } else
+*/
 
         if (currentToken.equals("=")) {
-            solution = calculate(firstOperand, Double.valueOf(currentOperand), currentOperator);
-            firstOperand = solution;
-        } else { 
-            solution = calculate(firstOperand, Double.parseDouble(currentOperand), currentOperator);// 5 
-            calculationField.setText(calculationField.getText() + " = ");
-            firstOperand = solution;
+            firstOperand = currentOperand;
+            firstOperandStr = String.valueOf(firstOperand);
+            isNewOperation = true;
+
+        } else {
+            firstOperand = calculate(currentOperand, firstOperand, currentOperator);
+            firstOperandStr = String.valueOf(firstOperand);
+            currentOperand = firstOperand;
+            currentOperandStr = String.valueOf(currentOperand);  
+            
         }
+
+        isNewOperation = false; 
+        currentOperator = operator;      
+        currentToken = operator;
+
+        calculationField.setText(firstOperandStr + " " + currentOperator);
+        printTesting();
+    }
+
+    /*
+     * WHen an operator is clicked the first operand appears (ex, 3 + : "3 +"), if you click an operator again then the firstoperand changes 
+     * (ex, 3 + : "3 +" 3 + 4 +: "7 +"), 
+     * 
+     * When a equals is clicked the second operand and a equal "=" sign get added. (ex, )
+     */
+
+    public void equalsAction() {
+
+        if(currentToken.equals("=")) {
+            firstOperand = currentOperand;
+            firstOperandStr = String.valueOf(currentOperand);
+            currentOperand = calculate(currentOperand, secondOperand, currentOperator);
+            currentOperandStr = String.valueOf(currentOperand);
+            savedResult = currentOperand;
+
+        } else if (firstOperandStr.isEmpty()) {
+            firstOperand = currentOperand;
+            firstOperandStr = String.valueOf(currentOperand);
         
-        resultTextArea.setText(String.valueOf(solution));            
-        //firstOperand = Double.valueOf(currentOperand) - firstOperand;
-        //currentOperator = "";
-        
+        } else {
+            savedResult = calculate(firstOperand, currentOperand, currentOperator);
+            secondOperand = currentOperand;
+            secondOperandStr = String.valueOf(secondOperand);
+            currentOperand = savedResult;
+            currentOperandStr = String.valueOf(currentOperand);
+            isNewOperation = true;
+
+        }
+
+        resultTextArea.setText(currentOperandStr);
+        calculationField.setText(firstOperandStr + " " + currentOperator + " " + secondOperandStr + " = ");
+
         currentToken = "=";
-        /*
-            * Click equals again, click operators again
-            */
-        System.out.println("--------------");
-        System.out.println("Current Operand: " + currentOperand + (" Double value: " + Double.parseDouble(currentOperand)));
-        System.out.println("First operand: " + firstOperand);
-        System.out.println("Second operand: " + secondOperand);
-        System.out.println("Current operator: " + currentOperator);
-        System.out.println("Current Token: " + currentToken);
-        System.out.println("--------------");
+        printTesting();
     
     }
 
-    public double calculate(double firstOperand, double secondValue, String operator) {
+    public void decimalPointButtonAction() {
+        currentOperandStr = currentOperandStr.concat(".");
+        currentOperand = currentOperand.doubleValue() + 0.0; 
+        resultTextArea.setText(currentOperandStr);
+
+        printTesting();
+
+    }
+
+    public void clearActions() {
+        currentOperand = 0;
+        firstOperand = 0;
+        secondOperand = 0;
+        thirdOperand = 0;
+        savedResult = 0;
+
+        currentOperandStr = "";
+        firstOperandStr = "";
+        secondOperandStr = "";
+        thirdOperandStr = "";
+        savedResultStr = "0";
+        
+        currentToken = "";
+        currentOperator = "+";
+        isNewOperation = true;
+
+        currentToken = "";
+
+        System.out.println("[ clearActions method called ]");
+
+        resultTextArea.setText(String.valueOf(currentOperand));
+        calculationField.setText("");
+
+        printTesting();
+
+    }
+
+    public void clearEntryActions() {
+
+        if(currentToken.equals("=")) {
+            clearActions();
+            return;
+        }
+
+        currentOperand = 0;
+        currentOperandStr = "";
+
+        if(!isNewOperation) {
+            isNewOperation = true;
+
+        }
+
+        resultTextArea.setText(String.valueOf(currentOperand));
+
+        printTesting();
+       
+        
+    }
+
+
+    public Number calculate(Number firstOperand, Number secondValue, String operator) {
+        
         switch(operator) {
-            case "+": return firstOperand + secondValue;
-            case "-": return firstOperand - secondValue;
-            case "X": return firstOperand * secondValue;
+            case "+": return printNumber(firstOperand.doubleValue() + secondValue.doubleValue());
+            case "-": return printNumber(firstOperand.doubleValue() - secondValue.doubleValue());
+            case "X": return printNumber(firstOperand.doubleValue() * secondValue.doubleValue());
             case "/": 
-                if(secondValue != 0) return firstOperand/secondValue;
+                if(secondValue.doubleValue() != 0.0) return printNumber(firstOperand.doubleValue() / secondValue.doubleValue());
                 else throw new ArithmeticException("Division by zero");
             default: return 0;
-                
+                        
         }
 
     }
+
+    public Number printNumber(double number) {
+
+        if(number == Math.floor(number)) {
+            return (int) number;
+            
+        } else {
+            return number;
+
+        }
+
+    }
+    
+    public void operation() {
+        if(isNewOperation == false) {
+            System.out.println("Old operation");
+        } else {
+            System.out.println("New operation");
+        }
+    }
+
+    public void printTesting() {
+        System.out.println("Current operand: " + currentOperand);
+        System.out.println("Current operand string : " + currentOperandStr);
+
+        System.out.println("First operand: " + firstOperand);
+        System.out.println("First operand string : " + firstOperandStr);
+
+        System.out.println("Second operand: " + secondOperand);
+        System.out.println("Second operand string: " + secondOperandStr);
+
+        System.out.println("Third operand: " + thirdOperand);
+        System.out.println("Third operand string: " + thirdOperandStr);
+
+        System.out.println("Current operator: " + currentOperator);
+
+        System.out.println("Saved result: " + savedResult);
+        System.out.println("Saved result string: " + savedResultStr);
+
+        System.out.println("Current Token: " + currentToken);
+        operation();
+        System.out.println("--------------");
+    }
+
+    public void instanceTest() {
+        System.out.println("Instance test executed (calc4)");
+    }
+
+    public void test() {
+        System.out.println("Test calc4");
+    }
+
+
 
 
     public static void main(String[] args) {
         Calculator calc = new Calculator();
 
     }
-
-
-
-
 
 }

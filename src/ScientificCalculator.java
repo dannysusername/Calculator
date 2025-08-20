@@ -1,11 +1,14 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class ScientificCalculator extends Calculator4 {
+public class ScientificCalculator extends Calculator {
+
+    String isNewOperation = "f";
+    
     
     public ScientificCalculator() {
         super();
-
+        
         //Add 3 Panel types to add more buttons
 
 
@@ -88,7 +91,6 @@ public class ScientificCalculator extends Calculator4 {
         
         firstRow.add(new JButton("DEG"));
         firstRow.add(new JButton("F-E"));
-
         secondRow.add(new JButton("MC"));
         secondRow.add(new JButton("MR"));
         secondRow.add(new JButton("M+"));
@@ -122,16 +124,13 @@ public class ScientificCalculator extends Calculator4 {
 
     }
 
+     public void test() {
+        System.out.println("Test scalc");
+    }
+
    
 
-    public static void main(String [] args) {
-        //ScientificCalculator scalc = new ScientificCalculator();
-        ScientificCalculator calc4 = new ScientificCalculator();
-        
-
-        //ScientificCalculator.test();
-
-    }
+    
 
     
 
