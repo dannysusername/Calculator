@@ -16,16 +16,16 @@ GUI Framework: Swing (JFrame, JTextField, JButton, ActionListener)
 Installation
 
 Clone the repository:
-textgit clone https://github.com/dannysusername/calculator.git
+git clone https://github.com/dannysusername/calculator.git
 
 Navigate to the project directory:
-textcd calculator
+cd calculator
 
 Compile the Java files:
-textjavac *.java
+javac *.java
 
 Run the application:
-textjava Calculator
+java Calculator
 
 
 Usage
